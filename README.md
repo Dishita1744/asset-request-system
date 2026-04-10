@@ -1,104 +1,126 @@
-# Frappe Framework Assessment
+<div align="center">
 
-A full-stack asset request and management system built with **Frappe Framework v15** for the backend and **Vue 3 + Vite** for the frontend.
+# Asset Request System
 
-This repository currently contains a **bench-style project structure**. That means it includes folders like `apps/`, `sites/`, `config/`, `logs/`, and `env/`. For testing and assessment purposes, the safest way to run this project is to **create a fresh Frappe bench** and then copy the custom app from this repository into that fresh bench, instead of trying to run the cloned bench directly.
+
+> A full-stack asset request and management system built with **Frappe Framework v15** (backend) and **Vue 3 + Vite** (frontend).
+
+![Frappe v15](https://img.shields.io/badge/Frappe-v15-6A2CF6?)
+![Vue 3](https://img.shields.io/badge/Vue-3-42B883?)
+![Vite](https://img.shields.io/badge/Vite-Frontend-646CFF?)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-06B6D4?)
+
+</div>
+
+**Quick Setup Links:** [macOS Setup](#macos-setup) | [Windows Setup](#windows-setup) | [Troubleshooting](#troubleshooting)
+
+## What we cover
+
+- [Tech Stack](#-tech-stack)
+- [What's in This Repo](#-whats-in-this-repo)
+- [Prerequisites](#-prerequisites)
+- [macOS Setup](#macos-setup)
+- [Windows Setup](#windows-setup)
+- [Linux Setup](#-linux-setup)
+- [Project URLs](#-project-urls)
+- [Login Credentials](#-login-credentials)
+- [Optional - Load Sample Data](#-optional--load-sample-data)
+- [Troubleshooting](#troubleshooting)
+- [Notes](#-notes)
 
 ---
 
-## Important Note
+## 📦 Tech Stack
 
-This repository is **not structured like a standard Frappe app repository**.
-
-Normally, only the custom app should be uploaded to GitHub. However, since this repository contains the whole bench-style structure, follow the setup steps below exactly.
+| Layer | Technology |
+|---|---|
+| Backend | Frappe Framework v15, Python 3.11 |
+| Frontend | Vue 3, Vite, Tailwind CSS |
+| Database | MariaDB |
+| Cache / Queue | Redis |
+| Package Manager | Yarn |
 
 ---
 
-## What You Actually Need From This Repo
+## 🗂️ What's in This Repo
 
-The main custom app used in this project is:
+This repo contains **only the custom Frappe app** — not the full bench. The app lives at:
 
-```bash
-apps/assetmanager
+```
+apps/assetmanager/
+├── assetmanager/          # Python backend (DocTypes, hooks, seed)
+└── frontend/              # Vue 3 frontend (Vite + Tailwind)
 ```
 
-This contains:
-
-- Frappe backend code
-- DocTypes
-- Hooks
-- Business logic
-- Vue frontend in `apps/assetmanager/frontend`
+You'll need to create a **fresh Frappe bench** and place this app inside it. The steps below walk you through that from scratch.
 
 ---
 
-# Setup Overview
+## ✅ Prerequisites
 
-The recommended way to run this project is:
+Before starting, make sure the following are available on your system:
 
-1. Install system dependencies
-2. Install `bench`
-3. Create a **fresh new bench**
-4. Copy `apps/assetmanager` from this repo into the new bench
-5. Install the app
-6. Create a Frappe site
-7. Run backend and frontend separately
-
----
-
-# Prerequisites
-
-Make sure the following are installed before starting:
-
-- Python 3.11 preferred
-- Node.js 18 or 20
-- Yarn
-- MariaDB
-- Redis
-- wkhtmltopdf
-- Git
-
-> Python 3.12 may work, but some Frappe/Bench environments can be more reliable on Python 3.11.
+- **Python 3.11** (recommended over 3.12)
+- **Node.js 18 or 20**
+- **Yarn**
+- **MariaDB**
+- **Redis**
+- **wkhtmltopdf**
+- **Git**
 
 ---
 
-# macOS Setup
+> NOTE: You can replace the "~" with your desired folder path
 
-## 1. Install Homebrew
+<a id="macos-setup"></a>
+## macOS Setup
+
+### Step 1 — Install Homebrew
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-## 2. Install required packages
+Follow any instructions it prints about adding Homebrew to your PATH.
+
+### Step 2 — Install System Dependencies
 
 ```bash
 brew install python@3.11 node mariadb redis wkhtmltopdf git
 npm install -g yarn
+```
+
+### Step 3 — Install bench CLI
+
+```bash
 pip3 install --user frappe-bench
 ```
 
-If `bench` is not found after install:
+If `bench` command is not found after install:
 
 ```bash
 echo 'export PATH="$HOME/Library/Python/3.11/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-## 3. Start services
+### Step 4 — Start Services
 
 ```bash
 brew services start mariadb
 brew services start redis
 ```
 
-## 4. Set MariaDB root password
+Verify Redis is running:
+
+```bash
+redis-cli ping   # Expected: PONG
+```
+
+### Step 5 — Set MariaDB Root Password
 
 ```bash
 mysql -u root
 ```
-
-Run:
 
 ```sql
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
@@ -106,48 +128,46 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-## 5. Create a fresh bench
+### Step 6 — Create a Fresh Bench
 
 ```bash
 cd ~
 bench init my-bench --frappe-branch version-15
+cd my-bench
 ```
 
-## 6. Copy the app from this repository
+> ⏳ This downloads Frappe and sets up the Python environment. It takes a few minutes.
 
-If your cloned repository is at `/path/to/asset-request-system`, run:
+### Step 7 — Clone and Copy the App
 
 ```bash
-cp -r /path/to/asset-request-system/apps/assetmanager ~/my-bench/apps/assetmanager
+cd ~
+git clone https://github.com/Dishita1744/asset-request-system.git
+cp -r ~/asset-request-system/apps/assetmanager ~/my-bench/apps/assetmanager
 ```
 
-## 7. Install the app package
+### Step 8 — Install the App Package
 
 ```bash
 cd ~/my-bench
 ./env/bin/pip install -e apps/assetmanager
 ```
 
-## 8. Create a new site
+### Step 9 — Create a Site
 
 ```bash
 bench new-site mysite.localhost --mariadb-root-password root --admin-password admin123
-```
-
-## 9. Set the default site
-
-```bash
 bench use mysite.localhost
 ```
 
-## 10. Install the app on the site
+### Step 10 — Install App and Migrate
 
 ```bash
 bench --site mysite.localhost install-app assetmanager
 bench --site mysite.localhost migrate
 ```
 
-## 11. Configure development settings
+### Step 11 — Configure Dev Settings
 
 ```bash
 bench --site mysite.localhost set-config developer_mode 1
@@ -155,7 +175,7 @@ bench --site mysite.localhost set-config cors_allowed_origins "http://localhost:
 bench --site mysite.localhost clear-cache
 ```
 
-## 12. Frontend setup
+### Step 12 — Set Up Vue Frontend
 
 ```bash
 cd ~/my-bench/apps/assetmanager/frontend
@@ -163,22 +183,24 @@ yarn install
 cp .env.example .env
 ```
 
-Set this in `.env`:
+Open `.env` and confirm:
 
 ```env
 VITE_BACKEND_URL=http://localhost:8000
 ```
 
-## 13. Run backend and frontend
+### Step 13 — Run Everything
 
-Terminal 1:
+Open **two terminals**:
+
+**Terminal 1** — Frappe backend:
 
 ```bash
 cd ~/my-bench
 bench start
 ```
 
-Terminal 2:
+**Terminal 2** — Vue frontend:
 
 ```bash
 cd ~/my-bench/apps/assetmanager/frontend
@@ -187,38 +209,49 @@ yarn dev --port 5173
 
 ---
 
-# Windows Setup
+<a id="windows-setup"></a>
+## Windows Setup
 
-## Important
+> ⚠️ Frappe does **not** run natively on Windows. You must use **WSL 2 (Windows Subsystem for Linux)**.
 
-Frappe does **not run natively on Windows**. Use **WSL2 with Ubuntu**.
+### Step 1 — Enable WSL 2
 
-## 1. Install WSL2
-
-Run PowerShell as Administrator:
+Open **PowerShell as Administrator**:
 
 ```powershell
 wsl --install
 ```
 
-Restart if prompted, then open Ubuntu.
+Restart your PC when prompted. Then open **Ubuntu** from the Start Menu and complete the setup.
 
-## 2. Install dependencies inside Ubuntu
+### Step 2 — Update Packages
 
 ```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y python3 python3-pip python3-venv python3-dev \
-  mariadb-server mariadb-client redis-server git curl wkhtmltopdf
-sudo apt install -y npm
+```
+
+### Step 3 — Install System Dependencies
+
+```bash
+sudo apt install -y python3 python3-pip python3-venv python3-dev   mariadb-server mariadb-client redis-server   git curl wkhtmltopdf npm
+```
+
+Install Node 18+ and Yarn:
+
+```bash
 sudo npm install -g yarn n
 sudo n 18
 ```
 
-Restart terminal after Node install.
+Close and reopen the terminal, then verify:
 
-## 3. Install bench
+```bash
+node --version   # should be v18.x or v20.x
+```
 
-Modern Ubuntu may block global `pip` installs due to externally managed Python environments. If that happens, use `pipx`:
+### Step 4 — Install bench CLI
+
+Modern Ubuntu blocks global `pip` installs. Use `pipx` instead:
 
 ```bash
 sudo apt install -y pipx
@@ -227,20 +260,18 @@ source ~/.bashrc
 pipx install frappe-bench
 ```
 
-## 4. Start MariaDB and Redis
+### Step 5 — Start Services
 
 ```bash
 sudo service mariadb start
 sudo service redis-server start
 ```
 
-## 5. Set MariaDB root password
+### Step 6 — Set MariaDB Root Password
 
 ```bash
 sudo mysql -u root
 ```
-
-Run:
 
 ```sql
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
@@ -248,48 +279,44 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-## 6. Create a fresh bench
+### Step 7 — Create a Fresh Bench
 
 ```bash
 cd ~
 bench init my-bench --frappe-branch version-15
+cd my-bench
 ```
 
-## 7. Copy the app from this repository
-
-If your repo is cloned at `/path/to/asset-request-system`, run:
+### Step 8 — Clone and Copy the App
 
 ```bash
-cp -r /path/to/asset-request-system/apps/assetmanager ~/my-bench/apps/assetmanager
+cd ~
+git clone https://github.com/Dishita1744/asset-request-system.git
+cp -r ~/asset-request-system/apps/assetmanager ~/my-bench/apps/assetmanager
 ```
 
-## 8. Install the app package
+### Step 9 — Install the App Package
 
 ```bash
 cd ~/my-bench
 ./env/bin/pip install -e apps/assetmanager
 ```
 
-## 9. Create a new site
+### Step 10 — Create a Site
 
 ```bash
 bench new-site mysite.localhost --mariadb-root-password root --admin-password admin123
-```
-
-## 10. Set the default site
-
-```bash
 bench use mysite.localhost
 ```
 
-## 11. Install app and migrate
+### Step 11 — Install App and Migrate
 
 ```bash
 bench --site mysite.localhost install-app assetmanager
 bench --site mysite.localhost migrate
 ```
 
-## 12. Configure development settings
+### Step 12 — Configure Dev Settings
 
 ```bash
 bench --site mysite.localhost set-config developer_mode 1
@@ -297,7 +324,7 @@ bench --site mysite.localhost set-config cors_allowed_origins "http://localhost:
 bench --site mysite.localhost clear-cache
 ```
 
-## 13. Frontend setup
+### Step 13 — Set Up Vue Frontend
 
 ```bash
 cd ~/my-bench/apps/assetmanager/frontend
@@ -305,75 +332,82 @@ yarn install
 cp .env.example .env
 ```
 
-Set:
+Confirm `.env` contains:
 
 ```env
 VITE_BACKEND_URL=http://localhost:8000
 ```
 
-## 14. Run backend and frontend
+### Step 14 — Run Everything
 
-Terminal 1:
+**WSL Terminal 1** — Frappe backend:
 
 ```bash
 cd ~/my-bench
 bench start
 ```
 
-Terminal 2:
+**WSL Terminal 2** — Vue frontend:
 
 ```bash
 cd ~/my-bench/apps/assetmanager/frontend
 yarn dev --port 5173
 ```
 
-Then open:
+---
 
-- Backend / Frappe Desk: `http://127.0.0.1:8000`
-- Frontend / Vue App: `http://127.0.0.1:5173`
+## 🐧 Linux Setup
+
+Follow the exact same steps as the **Windows WSL** section above, but run them directly in your Linux terminal — no WSL needed.
 
 ---
 
-# Linux Setup
+## 🌐 Project URLs
 
-For Ubuntu/Linux, follow the same steps as the Windows WSL section, but run them on your Linux machine directly.
+Once both servers are running, open these in your browser:
 
----
-
-# Login Credentials
-
-## Admin login
-
-- Username: `Administrator`
-- Password: `admin123`
-
-## Regular user testing
-
-Create a normal Frappe user from the backend:
-
-1. Open Frappe Desk
-2. Go to **User**
-3. Create a new user
-4. Assign the appropriate role
-5. Log in from the frontend using that user
+| What | URL |
+|---|---|
+| Vue Frontend | `http://127.0.0.1:5173` |
+| Frappe Desk (Admin) | `http://127.0.0.1:8000/app` |
+| Frappe Backend | `http://127.0.0.1:8000` |
 
 ---
 
-# Optional Sample Data
+## 🔐 Login Credentials
 
-If the project includes a seed function, run:
+| Role | Username | Password |
+|---|---|---|
+| Administrator | `Administrator` | `admin123` |
+
+### Creating a Regular User for Testing
+
+1. Open Frappe Desk → `http://127.0.0.1:8000/app`
+2. Search for **User** in the search bar
+3. Click **New**
+4. Fill in name and email
+5. Set a password under **Set Password**
+6. Assign the **Employee** role
+7. Save — then log in from the Vue frontend using that user
+
+---
+
+## 🌱 Optional — Load Sample Data
+
+If you want pre-loaded assets and requests for testing:
 
 ```bash
-bench --site mysite.localhost execute assetmanager.seed.seed_data
+bench --site mysite.localhost execute assetmanager.assetmanager.seed.seed_data
 ```
 
 ---
 
-# Troubleshooting
+<a id="troubleshooting"></a>
+## Troubleshooting
 
-## 1. `externally-managed-environment` while installing bench
+### `externally-managed-environment` error when installing bench
 
-Use `pipx` instead of `pip install`:
+Ubuntu 23+ blocks global pip installs. Use pipx:
 
 ```bash
 sudo apt install -y pipx
@@ -384,69 +418,100 @@ pipx install frappe-bench
 
 ---
 
-## 2. `WARN: Command not being executed in bench directory` or `No such command 'new-site'`
+### `bench` command not found after install
 
-This usually happens when trying to run commands inside a cloned bench snapshot instead of a properly initialized bench.
+```bash
+pipx ensurepath
+source ~/.bashrc
+```
 
-### Solution:
-Do **not** run the project directly from this cloned repository.
-
-Instead:
-
-1. Create a fresh bench with `bench init`
-2. Copy only `apps/assetmanager`
-3. Continue setup inside the fresh bench
+If still not found, restart your terminal completely.
 
 ---
 
-## 3. `Permission denied` during `bench init`
+### `bench new-site` fails — connection refused or access denied
 
-Example:
-
-```bash
-PermissionError: [Errno 13] Permission denied: 'my-bench'
-```
-
-### Fix:
-Create the bench inside your home directory:
+MariaDB is not running or the root password is wrong. Run:
 
 ```bash
-cd ~
-bench init my-bench --frappe-branch version-15
+# macOS
+brew services restart mariadb
+
+# Ubuntu/WSL
+sudo service mariadb restart
 ```
 
-Do not create it in a protected folder unless you own that folder.
+Then retry the `ALTER USER` SQL step.
 
 ---
 
-## 4. Frappe opens but shows `127.0.0.1 does not exist`
+### `127.0.0.1 does not exist` when opening Frappe
 
-This means the default site is not selected. Frappe supports setting a current site using `bench use`. [web:52]
-
-### Fix:
+The default site is not set. Run:
 
 ```bash
 bench use mysite.localhost
-```
-
-Then restart:
-
-```bash
 bench start
 ```
 
 ---
 
-## 5. Backend runs on the wrong port
+### Vue frontend shows CORS error
 
-Sometimes `bench start` may serve on a different port depending on the bench configuration or `Procfile`.
+Make sure you ran the CORS config step:
 
-Check the terminal output for the actual port, then either:
+```bash
+bench --site mysite.localhost set-config cors_allowed_origins "http://localhost:5173"
+bench --site mysite.localhost clear-cache
+```
 
-- use that port, or
-- edit `Procfile` and set:
+Then restart `bench start`.
 
-```txt
+---
+
+### Redis or MariaDB errors during `bench start`
+
+Services stopped. Restart them:
+
+```bash
+# macOS
+brew services start mariadb
+brew services start redis
+
+# Ubuntu/WSL
+sudo service mariadb start
+sudo service redis-server start
+```
+
+---
+
+### `yarn install` fails or frontend won't start
+
+Check your Node version:
+
+```bash
+node -v   # Must be v18 or v20
+```
+
+If wrong version, run:
+
+```bash
+sudo n 18   # WSL/Linux
+```
+
+Or on macOS:
+
+```bash
+brew install node@18
+```
+
+---
+
+### `bench start` runs on a different port
+
+Check the terminal output for the actual port. If needed, edit `Procfile` in the bench root:
+
+```
 web: bench serve --port 8000
 ```
 
@@ -454,90 +519,15 @@ Then restart bench.
 
 ---
 
-## 6. Vue frontend cannot reach backend
+## 📝 Notes
 
-Check:
-
-- backend is running
-- `.env` contains correct backend URL
-- CORS is configured
-
-Example:
-
-```env
-VITE_BACKEND_URL=http://localhost:8000
-```
-
-And run:
-
-```bash
-bench --site mysite.localhost set-config cors_allowed_origins "http://localhost:5173"
-bench --site mysite.localhost clear-cache
-```
+- The backend (Frappe) and frontend (Vue) run as **two separate servers**
+- The Vue app communicates with Frappe via REST API using the URL in `.env`
+- Developer mode enables hot reload and bypasses some Frappe caching
+- For production deployment, build the frontend with `yarn build` and serve through Nginx
 
 ---
 
-## 7. Redis or MariaDB errors during `bench start`
+## Author
 
-Start the services first.
-
-### macOS:
-
-```bash
-brew services start mariadb
-brew services start redis
-```
-
-### Ubuntu/WSL:
-
-```bash
-sudo service mariadb start
-sudo service redis-server start
-```
-
----
-
-## 8. `bench` command not found
-
-If installed with `pipx`, ensure path is loaded:
-
-```bash
-pipx ensurepath
-source ~/.bashrc
-```
-
-If needed, reopen terminal.
-
----
-
-## 9. `yarn install` or frontend build issues
-
-Check versions:
-
-```bash
-node -v
-yarn -v
-```
-
-Use Node 18 or 20.
-
----
-
-# Notes for Assessment Review
-
-- This project contains both backend and frontend code.
-- Backend runs through Frappe bench.
-- Frontend runs separately through Vite.
-- For real-world GitHub usage, this repo should ideally contain only the custom Frappe app, not the full bench structure.
-- For assessment/testing, the setup above is the safest and most reproducible method.
-
----
-
-# Project URLs
-
-When everything is running:
-
-- Frappe backend: `http://127.0.0.1:8000`
-- Frappe Desk: `http://127.0.0.1:8000/app`
-- Vue frontend: `http://127.0.0.1:5173`
-
+Dishita Somaiya
