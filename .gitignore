@@ -39,17 +39,18 @@ dmypy.json
 .ruff_cache/
 
 # ─── Frappe bench internals ──────────────────────────────────────────────────
-# Logs
-logs/
-*.log
-*.error.log
+# Logs — keep the directory (bench requires it), ignore only the log files
+logs/*.log
+logs/*.error.log
+!logs/.gitkeep
 
-# Redis config files (machine-specific, auto-generated)
+# Redis config files (machine-specific, auto-generated) — keep config/ dir itself
 config/redis_cache.conf
 config/redis_queue.conf
 config/redis_cache.acl
 config/redis_queue.acl
 config/pids/
+!config/.gitkeep
 
 # Sites — site-specific secrets & uploads (only push site structure, not data)
 sites/*/site_config.json
@@ -66,7 +67,6 @@ sites/assets/
 
 # Migration / scheduler files
 config/scheduler_process
-config/pids/
 
 # ─── Node / JS (top-level, in case) ──────────────────────────────────────────
 node_modules/
