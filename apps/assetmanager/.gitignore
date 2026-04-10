@@ -1,0 +1,44 @@
+# =============================================================================
+# assetmanager Frappe App - .gitignore
+# =============================================================================
+
+# ─── macOS ───────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ─── Python ──────────────────────────────────────────────────────────────────
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.egg-info/
+*.egg
+.Python
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ─── Frappe specific ─────────────────────────────────────────────────────────
+# Auto-generated patch list (managed by bench)
+patches.txt
+
+# Public/private files uploaded via Frappe (not source code)
+assetmanager/public/files/
+
+# ─── Node / Frontend (in case bench builds assets here) ──────────────────────
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# ─── Editor / IDE ────────────────────────────────────────────────────────────
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+tags
+TAGS
