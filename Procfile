@@ -6,7 +6,7 @@ redis_queue: redis-server config/redis_queue.conf
 web: bench serve  --port 8000
 
 
-socketio: /opt/homebrew/bin/node apps/frappe/socketio.js
+socketio: /usr/local/bin/node apps/frappe/socketio.js
 
 
 watch: bench watch
@@ -14,4 +14,5 @@ watch: bench watch
 
 schedule: bench schedule
 
-worker: OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES NO_PROXY=* bench worker 1>> logs/worker.log 2>> logs/worker.error.log
+worker:  bench worker 1>> logs/worker.log 2>> logs/worker.error.log
+
